@@ -89,6 +89,27 @@ We separate source code from configuration to allow for multi-environment deploy
 1. Triggers `terraform-cicd-pipeline`.
 2. Generates a `.yml` file that correctly points `working_directory` to Workload and `tfvars_file` to Deployment.
 
+### Tested Scenario: 
+
+
+```
+Create using terraform and azure. Use skills
+Hub-Data-RG	Resource Group rg-ajfc-hub-cin-data-01
+Storage Account	stajfchubcindata01
+Log Analytics	log-ajfc-hub-cin-01
+Key Vault	kv-ajfc-hub-cin-data-01
+Hub-Identity-RG	Resource Group	rg-ajfc-hub-cin-identity-01
+User Managed Identity	id-ajfc-hub-cin-github-01
+```
+```
+I need to onboard a new spoke project called 'finbot' in the dev environment hosted in Central India. Please scaffold the directory structure and generate the Terraform code for the following resources:
+Network: A Virtual Network with subnets for application and data.
+Data: A Storage Account for transaction logs and a Key Vault for secrets.
+Compute: An AKS cluster for the application workloads.
+AI: An Azure OpenAI instance for the financial model
+```
+
+
 ---
 
 ## 🤝 Contributing
