@@ -38,6 +38,27 @@ Ask your agent:
 | **[`terraform-code-style`](./.agent/skills/terraform-code-style/SKILL.md)** | Ensures code quality by enforcing strict file structures (`data.tf`, `locals.tf`) and prohibiting hardcoded values. | `lint code`, `check style`, `refactor` |
 | **[`terraform-rbac-management`](./.agent/skills/terraform-rbac-management/SKILL.md)** | Generates secure, ID-free RBAC assignments using dynamic runtime resolution (`data` sources). | `assign role`, `rbac`, `grant access` |
 | **[`terraform-cicd-pipeline`](./.agent/skills/terraform-cicd-pipeline/SKILL.md)** | Generates OIDC-authenticated GitHub Actions workflows that map correctly to our split directory structure. | `create pipeline`, `ci/cd`, `github action` |
+| **[`terraform-network-architecture`](./.agent/skills/terraform-network-architecture/SKILL.md)** | Generates Azure Network architecture using split-file pattern for NSG rules and routes. | `vnet`, `subnet`, `nsg`, `route table` |
+
+---
+
+## 📚 Helper Tooling: terraform-provider-cli
+
+Use this CLI tool to fetch up-to-date documentation and resource schemas directly from the Terraform Registry.
+
+### Installation & Setup
+
+```bash
+pip install terraform-provider-cli
+tpc config set-provider azurerm
+tpc config set-version <version-in-code>
+```
+
+### Common Commands (Always use version 4.64.0)
+
+- **Documentation**: `tpc doc {resource_name}` (e.g., `azurerm_linux_virtual_machine`)
+- **Search**: `tpc search {keyword}` to find the correct resource type
+- **List**: `tpc list resources --version 4.64.0` to see available types for the locked provider version
 
 ---
 
@@ -154,3 +175,9 @@ AI: An Azure OpenAI instance for the financial model
 1. **TDD is Mandatory:** All new skills must include a test plan (`baseline-scenarios.md`) before implementation.
 2. **Structure:** Follow the pattern `skills/<name>/SKILL.md` + `skills/<name>/references/`.
 3. **Validation:** Ensure new skills do not conflict with existing naming or architectural standards.
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
