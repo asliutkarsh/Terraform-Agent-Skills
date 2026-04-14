@@ -11,7 +11,7 @@ Enforce consistent Terraform coding standards for maintainability and collaborat
 
 ### Required Files
 
-Every Terraform component (in `Workload/`) **MUST** contain the following files, even if empty (for future extensibility):
+Every Terraform component (in `workload/`) **MUST** contain the following files, even if empty (for future extensibility):
 
 1.  `main.tf` - Primary resources and module calls (NO hardcoded values).
 2.  `variables.tf` - Input variable definitions.
@@ -256,9 +256,9 @@ locals {
 Use relative paths from the component:
 
 ```hcl
-# ✅ Good - Relative from Workload/
+# ✅ Good - Relative from workload/
 module "resource_group" {
-  source = "../../../Modules/resource_group"
+  source = "../../../modules/resource_group"
   
   resource_group_name     = local.resource_group_name
   resource_group_location = var.resource_group_location
@@ -267,7 +267,7 @@ module "resource_group" {
 
 # ❌ Bad - Absolute path
 module "resource_group" {
-  source = "/terraform/Modules/resource_group"
+  source = "/terraform/modules/resource_group"
   ...
 }
 ```

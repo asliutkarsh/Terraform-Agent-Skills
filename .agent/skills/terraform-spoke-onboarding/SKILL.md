@@ -31,14 +31,14 @@ Before starting:
 Create Terraform code directories:
 
 ```bash
-mkdir -p Workload/Spokes/{project-code}/{network,data,compute,ai}
+mkdir -p workload/spokes/{project-code}/{network,data,compute,ai}
 ```
 
 Each component needs standard files:
 
 ```bash
 # For each component (network, data, compute, ai)
-cd Workload/Spokes/{project-code}/{component}
+cd workload/spokes/{project-code}/{component}
 touch main.tf variables.tf outputs.tf providers.tf
 ```
 
@@ -47,21 +47,21 @@ touch main.tf variables.tf outputs.tf providers.tf
 Create configuration directories:
 
 ```bash
-mkdir -p Deployment/Spokes/{project-code}/{network,data,compute,ai}
+mkdir -p deployment/spokes/{project-code}/{network,data,compute,ai}
 ```
 
 Create tfvars files:
 
 ```bash
 # For each component
-touch Deployment/Spokes/{project-code}/{component}/{component}.tfvars
+touch deployment/spokes/{project-code}/{component}/{component}.tfvars
 ```
 
 ## Step 2: Write Terraform Code
 
 ### Example: Network Component
 
-**File: Workload/Spokes/{project-code}/network/main.tf**
+**File: workload/spokes/{project-code}/network/main.tf**
 
 ```hcl
 terraform {
@@ -105,7 +105,7 @@ locals {
 
 # Resource Group
 module "resource_group" {
-  source = "../../../../Modules/resource_group"
+  source = "../../../../modules/resource_group"
   
   resource_group_name     = local.resource_group_name
   resource_group_location = var.resource_group_location
@@ -114,7 +114,7 @@ module "resource_group" {
 
 # Virtual Network
 module "virtual_network" {
-  source = "../../../../Modules/networking"
+  source = "../../../../modules/networking"
   
   vnet_name           = local.vnet_name
   resource_group_name = module.resource_group.resource_group_name
@@ -127,13 +127,13 @@ module "virtual_network" {
 }
 ```
 
-**File: Workload/Spokes/{project-code}/network/variables.tf**
+**File: workload/spokes/{project-code}/network/variables.tf**
 
 ```hcl
 variable "org" {
   description = "Organization identifier"
   type        = string
-  default     = "ajfc"
+  default     = "org"
 }
 
 variable "project" {
@@ -199,7 +199,7 @@ variable "subnets" {
 }
 ```
 
-**File: Workload/Spokes/{project-code}/network/outputs.tf**
+**File: workload/spokes/{project-code}/network/outputs.tf**
 
 ```hcl
 output "resource_group_name" {
@@ -230,7 +230,7 @@ output "subnet_ids" {
 
 ## Step 3: Configure Environment Variables
 
-**File: Deployment/Spokes/{project-code}/network/network.tfvars**
+**File: deployment/spokes/{project-code}/network/network.tfvars**
 
 ```hcl
 # Project Configuration
@@ -292,7 +292,7 @@ jobs:
     uses: ./.github/workflows/terraform-plan.yml
     with:
       # Point to Spoke Workload Directory
-      working_directory: Workload/Spokes/{project-code}/${{ inputs.component }}
+      working_directory: workload/spokes/{project-code}/${{ inputs.component }}
       
       # Define unique State Key
       state_key: spokes/{project-code}/${{ inputs.component }}.tfstate
@@ -301,14 +301,14 @@ jobs:
       component_name: {project-code}-${{ inputs.component }}
       
       # Point to Spoke Deployment Configuration
-      tfvars_file: Deployment/Spokes/{project-code}/${{ inputs.component }}/${{ inputs.component }}.tfvars
+      tfvars_file: deployment/spokes/{project-code}/${{ inputs.component }}/${{ inputs.component }}.tfvars
     secrets: inherit
 
   apply:
     needs: plan
     uses: ./.github/workflows/terraform-apply.yml
     with:
-      working_directory: Workload/Spokes/{project-code}/${{ inputs.component }}
+      working_directory: workload/spokes/{project-code}/${{ inputs.component }}
       state_key: spokes/{project-code}/${{ inputs.component }}.tfstate
       component_name: {project-code}-${{ inputs.component }}
       environment: production
@@ -323,7 +323,7 @@ Before CI/CD, test locally:
 
 ```bash
 # Initialize
-cd Workload/Spokes/{project-code}/network
+cd workload/spokes/{project-code}/network
 terraform init \
   -backend-config="storage_account_name=${TF_STATE_SA_NAME}" \
   -backend-config="container_name=${TF_STATE_CONTAINER}" \
@@ -332,11 +332,11 @@ terraform init \
 
 # Plan
 terraform plan \
-  -var-file=../../../../Deployment/Spokes/{project-code}/network/network.tfvars
+  -var-file=../../../../deployment/spokes/{project-code}/network/network.tfvars
 
 # Apply (if plan looks good)
 terraform apply \
-  -var-file=../../../../Deployment/Spokes/{project-code}/network/network.tfvars
+  -var-file=../../../../deployment/spokes/{project-code}/network/network.tfvars
 ```
 
 ### CI/CD Deployment
@@ -399,8 +399,8 @@ Before deploying:
 
 **Solution:** Verify paths in workflow file:
 ```yaml
-working_directory: Workload/Spokes/{project-code}/{component}
-tfvars_file: Deployment/Spokes/{project-code}/{component}/{component}.tfvars
+working_directory: workload/spokes/{project-code}/{component}
+tfvars_file: deployment/spokes/{project-code}/{component}/{component}.tfvars
 ```
 
 ### Module Not Found
@@ -410,7 +410,7 @@ tfvars_file: Deployment/Spokes/{project-code}/{component}/{component}.tfvars
 **Solution:** Use relative paths from component directory:
 ```hcl
 module "example" {
-  source = "../../../../Modules/resource_group"  # 4 levels up from Spokes/{project}/{component}
+  source = "../../../../modules/resource_group"  # 4 levels up from spokes/{project}/{component}
   ...
 }
 ```

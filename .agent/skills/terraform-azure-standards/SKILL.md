@@ -1,11 +1,11 @@
 ---
 name: terraform-azure-standards
-description: Enforce Azure naming conventions, tagging standards, and Hub-Spoke resource classification for AJFC organization. Use when creating Azure resources, validating Terraform configurations, reviewing infrastructure code, or ensuring compliance with organizational standards. Triggers include mentions of resource naming, tags, Hub/Core resources, Spoke resources, or Azure infrastructure validation.
+description: Enforce Azure naming conventions, tagging standards, and Hub-Spoke resource classification for Azure infrastructure. Use when creating Azure resources, validating Terraform configurations, reviewing infrastructure code, or ensuring compliance with organizational standards. Triggers include mentions of resource naming, tags, Hub/Core resources, Spoke resources, or Azure infrastructure validation.
 ---
 
 # Terraform Azure Standards
 
-Enforce AJFC organization's Azure naming conventions and architectural standards.
+Enforce organization's Azure naming conventions and architectural standards.
 
 ## Naming Convention
 
@@ -77,14 +77,14 @@ modules/
       └── private_endpoint/
 ```
 
-Use these modules to create resources in your Terraform code inside `Workload/` directory.
+Use these modules to create resources in your Terraform code inside `workload/` directory.
 
 Example:
 ```hcl
 module "rg" {
   source = "./modules/resource_group"
 
-  name     = "rg-ajfc-hub-cin-data-01"
+  name     = "rg-org-hub-cin-data-01"
   location = "centralindia"
 
   tags = {
@@ -99,12 +99,12 @@ module "rg" {
 ## Resource Classification
 
 Create resources in Hub/Core for shared resources and in Spokes for project-specific resources.
-Use `Workload/Core/<component>/` for Hub/Core resources and `Workload/Spokes/<project>/<component>/` for Spoke resources.
+Use `workload/core/<component>/` for Hub/Core resources and `workload/spokes/<project>/<component>/` for Spoke resources.
 
 Folder structure:
 ```
-Workload/
-  ├── Core/
+workload/
+  ├── core/
   │   ├── data/
   │   │   ├── .tflint.hcl      # Required
   │   │   ├── backend.tf       # Required
@@ -115,7 +115,7 @@ Workload/
   │   │   ├── providers.tf
   │   │   └── variables.tf
   │   └── ...
-  └── Spokes/
+  └── spokes/
       └── <project>/
           └── <component>/
               ├── .tflint.hcl
@@ -126,25 +126,11 @@ refer to [terraform-code-style](terraform-code-style) for more details.
 
 ### Hub/Core Resources
 
-**Allowed Components:**
-- Network: VNet, Firewall, Bastion, VPN Gateway, Private DNS
-- Data: Log Analytics, Storage (logs/backup), Key Vault
-- Compute: APIM, Shared App Service Plans
-- AI: Azure OpenAI
-- Identity: Managed Identities, RBAC assignments
-- Governance: Azure Policy, Defender for Cloud
-
 **Hub Path Pattern:**
-- Code: `Workload/Core/<component>/`
-- Config: `Deployment/Core/<component>/`
+- Code: `workload/core/<component>/`
+- Config: `deployment/core/<component>/`
 
 ### Spoke Resources
-
-**Allowed Components:**
-- Network: VNet, Subnets, NSGs, Private Endpoints
-- Data: Storage, SQL, Cosmos DB, Key Vault, Event Hubs
-- Compute: VMs, AKS, App Service, ACR, Functions
-- AI: Azure OpenAI (project-specific), Cognitive Services
 
 **Prohibited in Spokes:**
 - RBAC definitions
@@ -152,8 +138,8 @@ refer to [terraform-code-style](terraform-code-style) for more details.
 - Governance resources
 
 **Spoke Path Pattern:**
-- Code: `Workload/Spokes/<project>/<component>/`
-- Config: `Deployment/Spokes/<project>/<component>/`
+- Code: `workload/spokes/<project>/<component>/`
+- Config: `deployment/spokes/<project>/<component>/`
 
 ## Validation Workflow
 
@@ -171,8 +157,8 @@ When reviewing Terraform code:
 
 ```hcl
 resource "azurerm_storage_account" "audit_logs" {
-  name                = "stajfchubcindata02"  # No hyphens
-  resource_group_name = "rg-ajfc-hub-cin-data-01"
+  name                = "storaghubcindata02"  # No hyphens
+  resource_group_name = "rg-org-hub-cin-data-01"
   location            = "centralindia"
   
   tags = {
@@ -188,7 +174,7 @@ resource "azurerm_storage_account" "audit_logs" {
 
 ```hcl
 resource "azurerm_resource_group" "ragbot_data" {
-  name     = "rg-ajfc-ragbot-dev-cin-data-01"
+  name     = "rg-org-ragbot-dev-cin-data-01"
   location = "centralindia"
   
   tags = {
@@ -204,8 +190,8 @@ resource "azurerm_resource_group" "ragbot_data" {
 
 **❌ Wrong naming format:**
 ```hcl
-name = "RG-AJFC-HUB-CIN-DATA-01"  # Uppercase
-name = "rg_ajfc_hub_cin_data_01"  # Underscores instead of hyphens
+name = "RG-ORG-HUB-CIN-DATA-01"  # Uppercase
+name = "rg_org_hub_cin_data_01"  # Underscores instead of hyphens
 ```
 
 **❌ Missing tags:**
@@ -218,7 +204,7 @@ tags = {
 
 **❌ Spoke with governance resources:**
 ```hcl
-# In Workload/Spokes/ragbot/
+# In workload/spokes/ragbot/
 resource "azurerm_policy_definition" "..."  # Not allowed in Spokes
 ```
 

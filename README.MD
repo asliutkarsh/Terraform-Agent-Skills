@@ -18,7 +18,7 @@ These skills turn your AI assistant into a **Senior Platform Engineer** capable 
    mkdir -p ~/.claude/skills
    cp -r skills/* ~/.claude/skills/
    ```
-4. Copy the `CLAUDE.md` file to the root of your infrastructure repository to activate the "Master Prompt" context.
+4. Copy the `AGENT.MD` file to the root of your infrastructure repository to activate the context.
 
 ### Verification
 
@@ -33,8 +33,8 @@ Ask your agent:
 
 | Skill Name | Description | Triggers |
 | :--- | :--- | :--- |
-| **[`terraform-spoke-onboarding`](./.agent/skills/terraform-spoke-onboarding/SKILL.md)** | Scaffolds new Hub or Spoke projects with the correct `Workload/` vs `Deployment/` directory structure. | `new project`, `onboard spoke`, `create workload` |
-| **[`terraform-azure-standards`](./.agent/skills/terraform-azure-standards/SKILL.md)** | Enforces AJFC naming conventions (e.g., `rg-ajfc-hub-cin-data-01`) and mandatory tagging policies. | `naming convention`, `tags`, `standard names` |
+| **[`terraform-spoke-onboarding`](./.agent/skills/terraform-spoke-onboarding/SKILL.md)** | Scaffolds new Hub or Spoke projects with the correct `workload/` vs `deployment/` directory structure. | `new project`, `onboard spoke`, `create workload` |
+| **[`terraform-azure-standards`](./.agent/skills/terraform-azure-standards/SKILL.md)** | Enforces naming conventions (e.g., `rg-org-hub-cin-data-01`) and mandatory tagging policies. | `naming convention`, `tags`, `standard names` |
 | **[`terraform-code-style`](./.agent/skills/terraform-code-style/SKILL.md)** | Ensures code quality by enforcing strict file structures (`data.tf`, `locals.tf`) and prohibiting hardcoded values. | `lint code`, `check style`, `refactor` |
 | **[`terraform-rbac-management`](./.agent/skills/terraform-rbac-management/SKILL.md)** | Generates secure, ID-free RBAC assignments using dynamic runtime resolution (`data` sources). | `assign role`, `rbac`, `grant access` |
 | **[`terraform-cicd-pipeline`](./.agent/skills/terraform-cicd-pipeline/SKILL.md)** | Generates OIDC-authenticated GitHub Actions workflows that map correctly to our split directory structure. | `create pipeline`, `ci/cd`, `github action` |
@@ -49,10 +49,46 @@ These skills enforce a strict **Hub-and-Spoke** model:
 
 We separate source code from configuration to allow for multi-environment deployments.
 
-* **Code:** `Workload/[Scope]/[Project]/[Component]/` (contains `.tf` files)
-* **Config:** `Deployment/[Scope]/[Project]/[Component]/` (contains `.tfvars`)
+* **Code:** `workload/[Scope]/[Project]/[Component]/` (contains `.tf` files)
+* **Config:** `deployment/[Scope]/[Project]/[Component]/` (contains `.tfvars`)
 
-### 2. Security First
+### 2. Supported Folder Structures
+
+When initializing a new project, ask the user which folder structure they prefer:
+
+**Option 1: 2-Folder Structure (modules + environment)**
+```
+terraform/
+├── modules/              # Reusable Terraform modules
+│   ├── resource_group/
+│   ├── networking/
+│   └── ...
+├── deployment/           # Environment-specific configurations
+│   ├── dev/
+│   │   ├── main.tf
+│   │   └── *.tfvars
+│   ├── uat/
+│   │   ├── main.tf
+│   │   └── *.tfvars
+│   └── prod/
+│       ├── main.tf
+│       └── *.tfvars
+```
+
+**Option 2: 3-Folder Structure (workload + deployment + modules)**
+```
+terraform/
+├── workload/            # Terraform source code
+│   └── ...
+├── deployment/           # Environment-specific configs (.tfvars)
+│   ├── dev/
+│   ├── uat/
+│   └── prod/
+└── modules/             # Reusable modules
+    └── ...
+```
+
+### 3. Security First
 
 * **No IDs in Config:** We never hardcode Object IDs or Subscription IDs in `.tf` files. We use names and resolve them via `data` sources.
 * **OIDC Auth:** Pipelines use OpenID Connect; no long-lived client secrets.
@@ -68,9 +104,10 @@ We separate source code from configuration to allow for multi-environment deploy
 **Agent Action:**
 
 1. Triggers `terraform-spoke-onboarding`.
-2. Creates `Workload/Spokes/genbot/` directories.
-3. Creates `Deployment/Spokes/genbot/` tfvars.
-4. Validates names using `terraform-azure-standards`.
+2. Asks user which folder structure they prefer.
+3. Creates `workload/spokes/genbot/` directories.
+4. Creates `deployment/spokes/genbot/` tfvars.
+5. Validates names using `terraform-azure-standards`.
 
 ### Scenario: Granting Access
 
@@ -87,19 +124,19 @@ We separate source code from configuration to allow for multi-environment deploy
 **Agent Action:**
 
 1. Triggers `terraform-cicd-pipeline`.
-2. Generates a `.yml` file that correctly points `working_directory` to Workload and `tfvars_file` to Deployment.
+2. Generates a `.yml` file that correctly points `working_directory` to workload and `tfvars_file` to deployment.
 
 ### Tested Scenario: 
 
 
 ```
 Create using terraform and azure. Use skills
-Hub-Data-RG	Resource Group rg-ajfc-hub-cin-data-01
-Storage Account	stajfchubcindata01
-Log Analytics	log-ajfc-hub-cin-01
-Key Vault	kv-ajfc-hub-cin-data-01
-Hub-Identity-RG	Resource Group	rg-ajfc-hub-cin-identity-01
-User Managed Identity	id-ajfc-hub-cin-github-01
+Hub-Data-RG	Resource Group rg-org-hub-cin-data-01
+Storage Account	storghubcindata01
+Log Analytics	log-org-hub-cin-01
+Key Vault	kv-org-hub-cin-data-01
+Hub-Identity-RG	Resource Group	rg-org-hub-cin-identity-01
+User Managed Identity	id-org-hub-cin-github-01
 ```
 ```
 I need to onboard a new spoke project called 'finbot' in the dev environment hosted in Central India. Please scaffold the directory structure and generate the Terraform code for the following resources:
@@ -117,4 +154,3 @@ AI: An Azure OpenAI instance for the financial model
 1. **TDD is Mandatory:** All new skills must include a test plan (`baseline-scenarios.md`) before implementation.
 2. **Structure:** Follow the pattern `skills/<name>/SKILL.md` + `skills/<name>/references/`.
 3. **Validation:** Ensure new skills do not conflict with existing naming or architectural standards.
-

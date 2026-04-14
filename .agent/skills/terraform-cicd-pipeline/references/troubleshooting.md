@@ -24,8 +24,8 @@ AADSTS70021: No matching federated identity record found
 # Check federated credential
 az identity federated-credential show \
   --name github-main \
-  --identity-name id-ajfc-hub-cin-github-terraform-01 \
-  --resource-group rg-ajfc-hub-cin-identity-01
+  --identity-name id-org-hub-cin-github-terraform-01 \
+  --resource-group rg-org-hub-cin-identity-01
 ```
 
 Expected subject format:
@@ -40,8 +40,8 @@ repo:organization/repository:ref:refs/heads/main
 3. Get correct client ID:
 ```bash
 az identity show \
-  --name id-ajfc-hub-cin-github-terraform-01 \
-  --resource-group rg-ajfc-hub-cin-identity-01 \
+  --name id-org-hub-cin-github-terraform-01 \
+  --resource-group rg-org-hub-cin-identity-01 \
   --query clientId -o tsv
 ```
 
@@ -61,8 +61,8 @@ The client does not have authorization to perform action
 ```bash
 az role assignment list \
   --assignee $(az identity show \
-    --name id-ajfc-hub-cin-github-terraform-01 \
-    --resource-group rg-ajfc-hub-cin-identity-01 \
+    --name id-org-hub-cin-github-terraform-01 \
+    --resource-group rg-org-hub-cin-identity-01 \
     --query principalId -o tsv)
 ```
 
@@ -102,14 +102,14 @@ state_key: spokes/ragbot/data.tfstate
 ```bash
 az storage container show \
   --name tfstate \
-  --account-name stajfchubcindata01
+  --account-name storghubcindata01
 ```
 
 3. List existing state files:
 ```bash
 az storage blob list \
   --container-name tfstate \
-  --account-name stajfchubcindata01 \
+  --account-name storghubcindata01 \
   --query "[].name" -o tsv
 ```
 
@@ -136,7 +136,7 @@ terraform force-unlock 12345678-1234-1234-1234-123456789abc
 
 # OR using Azure CLI
 az storage blob lease break \
-  --account-name stajfchubcindata01 \
+  --account-name storghubcindata01 \
   --container-name tfstate \
   --blob-name spokes/ragbot/data.tfstate
 ```
@@ -166,14 +166,14 @@ This is newer than current v1.5.0
 # List backup versions
 az storage blob list \
   --container-name tfstate \
-  --account-name stajfchubcindata01 \
+  --account-name storghubcindata01 \
   --prefix spokes/ragbot/data.tfstate
 
 # Restore from backup
 az storage blob copy start \
   --destination-blob spokes/ragbot/data.tfstate \
   --destination-container tfstate \
-  --account-name stajfchubcindata01 \
+  --account-name storghubcindata01 \
   --source-uri "<backup-blob-url>"
 ```
 
@@ -447,8 +447,8 @@ Required secrets:
 ```bash
 # Client ID
 az identity show \
-  --name id-ajfc-hub-cin-github-terraform-01 \
-  --resource-group rg-ajfc-hub-cin-identity-01 \
+  --name id-org-hub-cin-github-terraform-01 \
+  --resource-group rg-org-hub-cin-identity-01 \
   --query clientId -o tsv
 
 # Tenant ID

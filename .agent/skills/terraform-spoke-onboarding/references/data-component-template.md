@@ -137,7 +137,7 @@ module "cosmos_db" {
 variable "org" {
   description = "Organization identifier"
   type        = string
-  default     = "ajfc"
+  default     = "org"
 }
 
 variable "project" {

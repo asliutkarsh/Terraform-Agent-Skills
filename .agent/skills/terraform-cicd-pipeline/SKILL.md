@@ -43,9 +43,9 @@ Ensure these secrets exist in GitHub repository settings:
 | `AZURE_CLIENT_ID` | OIDC Client ID | `12345678-1234-1234-1234-123456789abc` |
 | `AZURE_TENANT_ID` | Azure Tenant ID | `87654321-4321-4321-4321-cba987654321` |
 | `AZURE_SUBSCRIPTION_ID` | Target Subscription | `abcdef12-3456-7890-abcd-ef1234567890` |
-| `TF_STATE_SA_NAME` | State Storage Account | `stajfchubcindata01` |
+| `TF_STATE_SA_NAME` | State Storage Account | `storaghubcindata01` |
 | `TF_STATE_CONTAINER` | State Container | `tfstate` |
-| `TF_STATE_RG` | State Resource Group | `rg-ajfc-hub-cin-data-01` |
+| `TF_STATE_RG` | State Resource Group | `rg-org-hub-cin-data-01` |
 
 ## Workflow Generation
 
@@ -62,8 +62,8 @@ on:
     branches:
       - main
     paths:
-      - 'Workload/Core/<component>/**'
-      - 'Deployment/Core/<component>/**'
+      - 'workload/core/<component>/**'
+      - 'deployment/core/<component>/**'
 
 permissions:
   id-token: write
@@ -73,17 +73,17 @@ jobs:
   plan:
     uses: ./.github/workflows/terraform-plan.yml
     with:
-      working_directory: Workload/Core/<component>
+      working_directory: workload/core/<component>
       state_key: core/<component>.tfstate
       component_name: core-<component>
-      tfvars_file: Deployment/Core/<component>/<component>.tfvars
+      tfvars_file: deployment/core/<component>/<component>.tfvars
     secrets: inherit
 
   apply:
     needs: plan
     uses: ./.github/workflows/terraform-apply.yml
     with:
-      working_directory: Workload/Core/<component>
+      working_directory: workload/core/<component>
       state_key: core/<component>.tfstate
       component_name: core-<component>
       environment: production
@@ -120,17 +120,17 @@ jobs:
   plan:
     uses: ./.github/workflows/terraform-plan.yml
     with:
-      working_directory: Workload/Spokes/<project>/${{ inputs.component }}
+      working_directory: workload/spokes/<project>/${{ inputs.component }}
       state_key: spokes/<project>/${{ inputs.component }}.tfstate
       component_name: <project>-${{ inputs.component }}
-      tfvars_file: Deployment/Spokes/<project>/${{ inputs.component }}/${{ inputs.component }}.tfvars
+      tfvars_file: deployment/spokes/<project>/${{ inputs.component }}/${{ inputs.component }}.tfvars
     secrets: inherit
 
   apply:
     needs: plan
     uses: ./.github/workflows/terraform-apply.yml
     with:
-      working_directory: Workload/Spokes/<project>/${{ inputs.component }}
+      working_directory: workload/spokes/<project>/${{ inputs.component }}
       state_key: spokes/<project>/${{ inputs.component }}.tfstate
       component_name: <project>-${{ inputs.component }}
       environment: production
@@ -292,15 +292,15 @@ Critical: Paths must align correctly between directories:
 
 | Layer | Hub/Core | Spoke |
 |-------|---------|-------|
-| **Code** | `Workload/Core/<component>` | `Workload/Spokes/<project>/<component>` |
-| **Config** | `Deployment/Core/<component>` | `Deployment/Spokes/<project>/<component>` |
+| **Code** | `workload/core/<component>` | `workload/spokes/<project>/<component>` |
+| **Config** | `deployment/core/<component>` | `deployment/spokes/<project>/<component>` |
 | **State Key** | `core/<component>.tfstate` | `spokes/<project>/<component>.tfstate` |
 
 ### Example: Hub Network
 
 ```yaml
-working_directory: Workload/Core/network
-tfvars_file: Deployment/Core/network/network.tfvars
+working_directory: workload/core/network
+tfvars_file: deployment/core/network/network.tfvars
 state_key: core/network.tfstate
 component_name: core-network
 ```
@@ -308,8 +308,8 @@ component_name: core-network
 ### Example: Spoke RagBot Data
 
 ```yaml
-working_directory: Workload/Spokes/ragbot/data
-tfvars_file: Deployment/Spokes/ragbot/data/data.tfvars
+working_directory: workload/spokes/ragbot/data
+tfvars_file: deployment/spokes/ragbot/data/data.tfvars
 state_key: spokes/ragbot/data.tfstate
 component_name: ragbot-data
 ```
@@ -342,8 +342,8 @@ on:
     branches:
       - main
     paths:
-      - 'Workload/Core/network/**'
-      - 'Deployment/Core/network/**'
+      - 'workload/core/network/**'
+      - 'deployment/core/network/**'
 ```
 
 ### Pull Request Trigger (plan-only)
@@ -354,8 +354,8 @@ For PR validation:
 on:
   pull_request:
     paths:
-      - 'Workload/**'
-      - 'Deployment/**'
+      - 'workload/**'
+      - 'deployment/**'
 
 jobs:
   plan:
@@ -396,17 +396,17 @@ jobs:
   plan:
     uses: ./.github/workflows/terraform-plan.yml
     with:
-      working_directory: Workload/Spokes/ragbot/${{ inputs.component }}
+      working_directory: workload/spokes/ragbot/${{ inputs.component }}
       state_key: spokes/ragbot/${{ inputs.environment }}/${{ inputs.component }}.tfstate
       component_name: ragbot-${{ inputs.environment }}-${{ inputs.component }}
-      tfvars_file: Deployment/Spokes/ragbot/${{ inputs.environment }}/${{ inputs.component }}.tfvars
+      tfvars_file: deployment/spokes/ragbot/${{ inputs.environment }}/${{ inputs.component }}.tfvars
     secrets: inherit
 
   apply:
     needs: plan
     uses: ./.github/workflows/terraform-apply.yml
     with:
-      working_directory: Workload/Spokes/ragbot/${{ inputs.component }}
+      working_directory: workload/spokes/ragbot/${{ inputs.component }}
       state_key: spokes/ragbot/${{ inputs.environment }}/${{ inputs.component }}.tfstate
       component_name: ragbot-${{ inputs.environment }}-${{ inputs.component }}
       environment: ${{ inputs.environment }}
@@ -422,17 +422,17 @@ jobs:
   plan-network:
     uses: ./.github/workflows/terraform-plan.yml
     with:
-      working_directory: Workload/Spokes/ragbot/network
+      working_directory: workload/spokes/ragbot/network
       state_key: spokes/ragbot/network.tfstate
       component_name: ragbot-network
-      tfvars_file: Deployment/Spokes/ragbot/network/network.tfvars
+      tfvars_file: deployment/spokes/ragbot/network/network.tfvars
     secrets: inherit
 
   apply-network:
     needs: plan-network
     uses: ./.github/workflows/terraform-apply.yml
     with:
-      working_directory: Workload/Spokes/ragbot/network
+      working_directory: workload/spokes/ragbot/network
       state_key: spokes/ragbot/network.tfstate
       component_name: ragbot-network
       environment: production
@@ -442,17 +442,17 @@ jobs:
     needs: apply-network
     uses: ./.github/workflows/terraform-plan.yml
     with:
-      working_directory: Workload/Spokes/ragbot/data
+      working_directory: workload/spokes/ragbot/data
       state_key: spokes/ragbot/data.tfstate
       component_name: ragbot-data
-      tfvars_file: Deployment/Spokes/ragbot/data/data.tfvars
+      tfvars_file: deployment/spokes/ragbot/data/data.tfvars
     secrets: inherit
 
   apply-data:
     needs: plan-data
     uses: ./.github/workflows/terraform-apply.yml
     with:
-      working_directory: Workload/Spokes/ragbot/data
+      working_directory: workload/spokes/ragbot/data
       state_key: spokes/ragbot/data.tfstate
       component_name: ragbot-data
       environment: production
@@ -468,15 +468,15 @@ For detailed troubleshooting steps and common issues, see [references/troublesho
 **Path not found:**
 ```yaml
 # Ensure tfvars_file path is relative from repo root
-tfvars_file: Deployment/Spokes/ragbot/data/data.tfvars
-# NOT: ../../../Deployment/...
+tfvars_file: deployment/spokes/ragbot/data/data.tfvars
+# NOT: ../../../deployment/...
 ```
 
 **State lock errors:**
 ```bash
 # Manually unlock state if workflow cancelled
 az storage blob lease break \
-  --account-name stajfchubcindata01 \
+  --account-name storaghubcindata01 \
   --container-name tfstate \
   --blob-name spokes/ragbot/data.tfstate
 ```

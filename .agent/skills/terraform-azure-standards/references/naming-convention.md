@@ -1,6 +1,6 @@
 # Azure Naming Convention Complete Reference
 
-Complete naming standards for AJFC organization Azure resources.
+Complete naming standards for Azure resources.
 
 ## Naming Formulas
 
@@ -13,17 +13,17 @@ Complete naming standards for AJFC organization Azure resources.
 
 **Segments:**
 - `ResourceType`: Standard abbreviation (e.g., `rg`, `vnet`, `kv`)
-- `Org`: Always `ajfc`
+- `Org`: Organization identifier
 - `Scope`: Always `hub` for Core resources
 - `Location`: Region code (`cin`, `eus`, `weu`, `sin`)
 - `Component`: Architectural layer (`network`, `data`, `compute`, `ai`, `identity`, `governance`)
 - `Instance`: Two-digit sequence (`01`, `02`, `03`)
 
 **Examples:**
-- `rg-ajfc-hub-cin-network-01`
-- `vnet-ajfc-hub-cin-01`
-- `kv-ajfc-hub-cin-data-01`
-- `log-ajfc-hub-cin-01`
+- `rg-org-hub-cin-network-01`
+- `vnet-org-hub-cin-01`
+- `kv-org-hub-cin-data-01`
+- `log-org-hub-cin-01`
 
 ### Spoke Resources
 
@@ -34,7 +34,7 @@ Complete naming standards for AJFC organization Azure resources.
 
 **Segments:**
 - `ResourceType`: Standard abbreviation
-- `Org`: Always `ajfc`
+- `Org`: Organization identifier
 - `Project`: Project code (max 6 chars, e.g., `ragbot`, `custbot`, `finbot`)
 - `Env`: Environment (`dev`, `uat`, `prod`)
 - `Location`: Region code
@@ -42,9 +42,9 @@ Complete naming standards for AJFC organization Azure resources.
 - `Instance`: Two-digit sequence
 
 **Examples:**
-- `rg-ajfc-ragbot-dev-cin-data-01`
-- `aks-ajfc-ragbot-prod-cin-01`
-- `kv-ajfc-custbot-uat-cin-data-01`
+- `rg-org-ragbot-dev-cin-data-01`
+- `aks-org-ragbot-prod-cin-01`
+- `kv-org-custbot-uat-cin-data-01`
 
 ## Location Codes
 
@@ -90,11 +90,11 @@ These resources do NOT support hyphens:
 - Result must be 3-24 characters (lowercase letters and numbers only)
 
 **Example transformations:**
-- Standard: `st-ajfc-hub-cin-data-01`
-- Actual: `stajfchubcindata01`
+- Standard: `st-org-hub-cin-data-01`
+- Actual: `storaghubcindata01`
 
-- Standard: `acr-ajfc-ragbot-dev-cin-01`
-- Actual: `acrajfcragbotdevcin01`
+- Standard: `acr-org-ragbot-dev-cin-01`
+- Actual: `acrragbotdevcin01`
 
 ## Environment Codes
 
@@ -113,10 +113,10 @@ These resources do NOT support hyphens:
 Creating "Finance Automation Bot" (`finbot`) in Dev, Central India:
 
 ```
-Resource Group:  rg-ajfc-finbot-dev-cin-data-01
-Key Vault:       kv-ajfc-finbot-dev-cin-data-01
-Storage:         stajfcfinbotdevcindata01
-AKS:             aks-ajfc-finbot-dev-cin-01
+Resource Group:  rg-org-finbot-dev-cin-data-01
+Key Vault:       kv-org-finbot-dev-cin-data-01
+Storage:         storfinbotdevcindata01
+AKS:             aks-org-finbot-dev-cin-01
 ```
 
 ### Scenario 2: Hub Storage for Audit Logs
@@ -124,8 +124,8 @@ AKS:             aks-ajfc-finbot-dev-cin-01
 Adding audit log storage in Hub, Central India:
 
 ```
-Resource Group:  rg-ajfc-hub-cin-data-01
-Storage Account: stajfchubcindata02
+Resource Group:  rg-org-hub-cin-data-01
+Storage Account: storaghubcindata02
 ```
 
 ### Scenario 3: Multi-Environment Spoke
@@ -134,16 +134,16 @@ Same project across environments:
 
 ```
 Dev:
-  rg-ajfc-ragbot-dev-cin-compute-01
-  aks-ajfc-ragbot-dev-cin-01
+  rg-org-ragbot-dev-cin-compute-01
+  aks-org-ragbot-dev-cin-01
 
 UAT:
-  rg-ajfc-ragbot-uat-cin-compute-01
-  aks-ajfc-ragbot-uat-cin-01
+  rg-org-ragbot-uat-cin-compute-01
+  aks-org-ragbot-uat-cin-01
 
 Prod:
-  rg-ajfc-ragbot-prod-cin-compute-01
-  aks-ajfc-ragbot-prod-cin-01
+  rg-org-ragbot-prod-cin-compute-01
+  aks-org-ragbot-prod-cin-01
 ```
 
 ## Common Validation Errors
@@ -152,29 +152,29 @@ Prod:
 
 ```
 # Wrong case
-RG-AJFC-HUB-CIN-DATA-01
+RG-ORG-HUB-CIN-DATA-01
 
 # Wrong separator
-rg_ajfc_hub_cin_data_01
+rg_org_hub_cin_data_01
 
 # Missing org
 rg-hub-cin-data-01
 
 # Wrong abbreviation
-resourcegroup-ajfc-hub-cin-data-01
+resourcegroup-org-hub-cin-data-01
 
 # Storage with hyphens
-st-ajfc-hub-cin-data-01
+st-org-hub-cin-data-01
 
 # Environment in Hub name
-rg-ajfc-hub-prod-cin-data-01
+rg-org-hub-prod-cin-data-01
 ```
 
 ### ✅ Correct
 
 ```
-rg-ajfc-hub-cin-data-01
-stajfchubcindata01
-kv-ajfc-ragbot-dev-cin-data-01
-aks-ajfc-custbot-prod-cin-01
+rg-org-hub-cin-data-01
+storaghubcindata01
+kv-org-ragbot-dev-cin-data-01
+aks-org-custbot-prod-cin-01
 ```

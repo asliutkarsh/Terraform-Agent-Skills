@@ -72,11 +72,11 @@ rbac_assignments = {
 rbac_assignments = {
   "github_terraform_subscription_owner" = {
     principal_type                    = "managed_identity"
-    principal_name                    = "id-ajfc-hub-cin-github-terraform-01"
+    principal_name                    = "id-org-hub-cin-github-terraform-01"
     role_name                         = "Owner"
     scope_type                        = "subscription"
     scope_name                        = "subscription"
-    managed_identities_resource_group = "rg-ajfc-hub-cin-identity-01"
+    managed_identities_resource_group = "rg-org-hub-cin-identity-01"
     description                       = "GitHub Actions Terraform automation with full subscription access"
   }
 }
@@ -90,12 +90,12 @@ rbac_assignments = {
 rbac_assignments = {
   "github_terraform_keyvault_secrets" = {
     principal_type                    = "managed_identity"
-    principal_name                    = "id-ajfc-hub-cin-github-terraform-01"
+    principal_name                    = "id-org-hub-cin-github-terraform-01"
     role_name                         = "Key Vault Secrets User"
     scope_type                        = "key_vault"
-    scope_name                        = "kv-ajfc-hub-cin-data-01"
-    scope_resource_group              = "rg-ajfc-hub-cin-data-01"
-    managed_identities_resource_group = "rg-ajfc-hub-cin-identity-01"
+    scope_name                        = "kv-org-hub-cin-data-01"
+    scope_resource_group              = "rg-org-hub-cin-data-01"
+    managed_identities_resource_group = "rg-org-hub-cin-identity-01"
     description                       = "Read-only access to Hub Key Vault secrets for CI/CD"
   }
 }
@@ -109,12 +109,12 @@ rbac_assignments = {
 rbac_assignments = {
   "app_storage_blob_contributor" = {
     principal_type                    = "managed_identity"
-    principal_name                    = "id-ajfc-ragbot-dev-cin-app-01"
+    principal_name                    = "id-org-ragbot-dev-cin-app-01"
     role_name                         = "Storage Blob Data Contributor"
     scope_type                        = "storage_account"
-    scope_name                        = "stajfcragbotdevcindata01"
-    scope_resource_group              = "rg-ajfc-ragbot-dev-cin-data-01"
-    managed_identities_resource_group = "rg-ajfc-ragbot-dev-cin-identity-01"
+    scope_name                        = "storagragbotdevcindata01"
+    scope_resource_group              = "rg-org-ragbot-dev-cin-data-01"
+    managed_identities_resource_group = "rg-org-ragbot-dev-cin-identity-01"
     description                       = "Application access to blob storage for data processing"
   }
 }
@@ -128,11 +128,11 @@ rbac_assignments = {
 rbac_assignments = {
   "dev_team_lead_rg_contributor" = {
     principal_type       = "user"
-    principal_name       = "john.doe@ajfc.com"
+    principal_name       = "john.doe@example.com"
     role_name            = "Contributor"
     scope_type           = "resource_group"
-    scope_name           = "rg-ajfc-ragbot-dev-cin-data-01"
-    scope_resource_group = "rg-ajfc-ragbot-dev-cin-data-01"
+    scope_name           = "rg-org-ragbot-dev-cin-data-01"
+    scope_resource_group = "rg-org-ragbot-dev-cin-data-01"
     description          = "Development team lead access to ragbot dev environment"
   }
 }
@@ -149,8 +149,8 @@ rbac_assignments = {
     principal_name       = "monitoring-service-principal"
     role_name            = "Reader"
     scope_type           = "resource_group"
-    scope_name           = "rg-ajfc-hub-cin-network-01"
-    scope_resource_group = "rg-ajfc-hub-cin-network-01"
+    scope_name           = "rg-org-hub-cin-network-01"
+    scope_resource_group = "rg-org-hub-cin-network-01"
     description          = "Monitoring service read access to network resources"
   }
 }
@@ -446,7 +446,7 @@ rbac_assignments = {
   "app_keyvault_access" = {
     role_name  = "Key Vault Secrets User"
     scope_type = "key_vault"
-    scope_name = "kv-ajfc-ragbot-dev-cin-data-01"
+    scope_name = "kv-org-ragbot-dev-cin-data-01"
     # ...
   }
 }
@@ -469,7 +469,7 @@ rbac_assignments = {
   "dev_storage_access" = {
     role_name  = "Storage Blob Data Contributor"
     scope_type = "storage_account"
-    scope_name = "stajfcragbotdevcindata01"
+    scope_name = "storagragbotdevcindata01"
     # ...
   }
 }
@@ -503,24 +503,24 @@ For a complete working example, see [references/complete-example.md](references/
 
 ### Principal Not Found
 
-**Error:** `Principal 'id-ajfc-hub-cin-github-01' not found`
+**Error:** `Principal 'id-org-hub-cin-github-01' not found`
 
 **Solution:** Verify principal exists and resource group is correct:
 ```bash
 az identity show \
-  --name id-ajfc-hub-cin-github-01 \
-  --resource-group rg-ajfc-hub-cin-identity-01
+  --name id-org-hub-cin-github-01 \
+  --resource-group rg-org-hub-cin-identity-01
 ```
 
 ### Scope Not Found
 
-**Error:** `Scope 'kv-ajfc-hub-cin-data-01' not found`
+**Error:** `Scope 'kv-org-hub-cin-data-01' not found`
 
 **Solution:** Verify resource exists:
 ```bash
 az keyvault show \
-  --name kv-ajfc-hub-cin-data-01 \
-  --resource-group rg-ajfc-hub-cin-data-01
+  --name kv-org-hub-cin-data-01 \
+  --resource-group rg-org-hub-cin-data-01
 ```
 
 ### Permission Denied

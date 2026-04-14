@@ -119,7 +119,7 @@ module "role_assignment" {
 variable "org" {
   description = "Organization identifier"
   type        = string
-  default     = "ajfc"
+  default     = "org"
 }
 
 variable "scope" {
@@ -443,13 +443,13 @@ identities = [
         name     = "main"
         audience = ["api://AzureADTokenExchange"]
         issuer   = "https://token.actions.githubusercontent.com"
-        subject  = "repo:ajfc-org/terraform-azure-infrastructure:ref:refs/heads/main"
+        subject  = "repo:org-name/terraform-azure-infrastructure:ref:refs/heads/main"
       },
       {
         name     = "pull-request"
         audience = ["api://AzureADTokenExchange"]
         issuer   = "https://token.actions.githubusercontent.com"
-        subject  = "repo:ajfc-org/terraform-azure-infrastructure:pull_request"
+        subject  = "repo:org-name/terraform-azure-infrastructure:pull_request"
       }
     ]
   }
@@ -460,42 +460,42 @@ rbac_assignments = {
   # GitHub Actions - Full subscription access
   "github_terraform_subscription_owner" = {
     principal_type                    = "managed_identity"
-    principal_name                    = "id-ajfc-hub-cin-github-terraform-01"
+    principal_name                    = "id-org-hub-cin-github-terraform-01"
     role_name                         = "Owner"
     scope_type                        = "subscription"
     scope_name                        = "subscription"
-    managed_identities_resource_group = "rg-ajfc-hub-cin-identity-01"
+    managed_identities_resource_group = "rg-org-hub-cin-identity-01"
     description                       = "GitHub Actions Terraform automation with full subscription access for infrastructure deployment"
   }
 
   # GitHub Actions - Hub Key Vault access
   "github_terraform_hub_keyvault" = {
     principal_type                    = "managed_identity"
-    principal_name                    = "id-ajfc-hub-cin-github-terraform-01"
+    principal_name                    = "id-org-hub-cin-github-terraform-01"
     role_name                         = "Key Vault Secrets User"
     scope_type                        = "key_vault"
-    scope_name                        = "kv-ajfc-hub-cin-data-01"
-    scope_resource_group              = "rg-ajfc-hub-cin-data-01"
-    managed_identities_resource_group = "rg-ajfc-hub-cin-identity-01"
+    scope_name                        = "kv-org-hub-cin-data-01"
+    scope_resource_group              = "rg-org-hub-cin-data-01"
+    managed_identities_resource_group = "rg-org-hub-cin-identity-01"
     description                       = "GitHub Actions read access to Hub Key Vault for deployment secrets"
   }
 
   # GitHub Actions - Terraform state storage
   "github_terraform_state_storage" = {
     principal_type                    = "managed_identity"
-    principal_name                    = "id-ajfc-hub-cin-github-terraform-01"
+    principal_name                    = "id-org-hub-cin-github-terraform-01"
     role_name                         = "Storage Blob Data Contributor"
     scope_type                        = "storage_account"
-    scope_name                        = "stajfchubcindata01"
-    scope_resource_group              = "rg-ajfc-hub-cin-data-01"
-    managed_identities_resource_group = "rg-ajfc-hub-cin-identity-01"
+    scope_name                        = "storghubcindata01"
+    scope_resource_group              = "rg-org-hub-cin-data-01"
+    managed_identities_resource_group = "rg-org-hub-cin-identity-01"
     description                       = "GitHub Actions access to Terraform state storage for state management"
   }
 
   # Platform Team Lead - Subscription contributor
   "platform_lead_subscription_contributor" = {
     principal_type = "user"
-    principal_name = "platform.lead@ajfc.com"
+    principal_name = "platform.lead@org.com"
     role_name      = "Contributor"
     scope_type     = "subscription"
     scope_name     = "subscription"
@@ -505,7 +505,7 @@ rbac_assignments = {
   # Platform Team Lead - User Access Administrator
   "platform_lead_access_admin" = {
     principal_type = "user"
-    principal_name = "platform.lead@ajfc.com"
+    principal_name = "platform.lead@org.com"
     role_name      = "User Access Administrator"
     scope_type     = "subscription"
     scope_name     = "subscription"
@@ -515,11 +515,11 @@ rbac_assignments = {
   # DevOps Team - Network contributor
   "devops_network_contributor" = {
     principal_type       = "user"
-    principal_name       = "devops.team@ajfc.com"
+    principal_name       = "devops.team@org.com"
     role_name            = "Network Contributor"
     scope_type           = "resource_group"
-    scope_name           = "rg-ajfc-hub-cin-network-01"
-    scope_resource_group = "rg-ajfc-hub-cin-network-01"
+    scope_name           = "rg-org-hub-cin-network-01"
+    scope_resource_group = "rg-org-hub-cin-network-01"
     description          = "DevOps team network management access for Hub networking"
   }
 
@@ -543,10 +543,10 @@ rbac_assignments = {
 cd Workload/Core/identity
 
 terraform init \
-  -backend-config="storage_account_name=stajfchubcindata01" \
+  -backend-config="storage_account_name=storghubcindata01" \
   -backend-config="container_name=tfstate" \
   -backend-config="key=core/identity.tfstate" \
-  -backend-config="resource_group_name=rg-ajfc-hub-cin-data-01"
+  -backend-config="resource_group_name=rg-org-hub-cin-data-01"
 
 terraform plan \
   -var-file="../../../Deployment/Core/identity/identity.tfvars"
@@ -562,17 +562,17 @@ Changes to Outputs:
       + "0" = {
           + client_id    = (known after apply)
           + id           = (known after apply)
-          + name         = "id-ajfc-hub-cin-github-terraform-01"
+          + name         = "id-org-hub-cin-github-terraform-01"
           + principal_id = (known after apply)
         }
     }
   + rbac_assignments = {
       + "devops_network_contributor" = {
           + description    = "DevOps team network management access for Hub networking"
-          + principal_name = "devops.team@ajfc.com"
+          + principal_name = "devops.team@org.com"
           + principal_type = "user"
           + role_name      = "Network Contributor"
-          + scope_name     = "rg-ajfc-hub-cin-network-01"
+          + scope_name     = "rg-org-hub-cin-network-01"
           + scope_type     = "resource_group"
         }
       # ... more assignments
@@ -593,8 +593,8 @@ terraform apply \
 
 ```bash
 az identity show \
-  --name id-ajfc-hub-cin-github-terraform-01 \
-  --resource-group rg-ajfc-hub-cin-identity-01
+  --name id-org-hub-cin-github-terraform-01 \
+  --resource-group rg-org-hub-cin-identity-01
 ```
 
 ### Verify RBAC Assignments
@@ -602,8 +602,8 @@ az identity show \
 ```bash
 # List all role assignments for the identity
 PRINCIPAL_ID=$(az identity show \
-  --name id-ajfc-hub-cin-github-terraform-01 \
-  --resource-group rg-ajfc-hub-cin-identity-01 \
+  --name id-org-hub-cin-github-terraform-01 \
+  --resource-group rg-org-hub-cin-identity-01 \
   --query principalId -o tsv)
 
 az role assignment list \
@@ -625,7 +625,7 @@ az login \
 
 # Verify access
 az account show
-az keyvault secret list --vault-name kv-ajfc-hub-cin-data-01
+az keyvault secret list --vault-name kv-org-hub-cin-data-01
 ```
 
 ## Extending the Example
@@ -649,12 +649,12 @@ rbac_assignments = {
   # ... existing assignments
   "aks_workload_storage_reader" = {
     principal_type                    = "managed_identity"
-    principal_name                    = "id-ajfc-hub-cin-aks-workload-01"
+    principal_name                    = "id-org-hub-cin-aks-workload-01"
     role_name                         = "Storage Blob Data Reader"
     scope_type                        = "storage_account"
-    scope_name                        = "stajfcragbotdevcindata01"
-    scope_resource_group              = "rg-ajfc-ragbot-dev-cin-data-01"
-    managed_identities_resource_group = "rg-ajfc-hub-cin-identity-01"
+    scope_name                        = "storgragbotdevcindata01"
+    scope_resource_group              = "rg-org-ragbot-dev-cin-data-01"
+    managed_identities_resource_group = "rg-org-hub-cin-identity-01"
     description                       = "AKS workload read access to application storage"
   }
 }
