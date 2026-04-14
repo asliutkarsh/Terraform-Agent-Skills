@@ -77,7 +77,7 @@ We separate source code from configuration to allow for multi-environment deploy
 
 When initializing a new project, ask the user which folder structure they prefer:
 
-**Option 1: 2-Folder Structure (modules + environment)**
+**Option 1: Folder Structure (modules + environment)**
 ```
 terraform/
 ├── modules/              # Reusable Terraform modules
@@ -85,6 +85,9 @@ terraform/
 │   ├── networking/
 │   └── ...
 ├── deployment/           # Environment-specific configurations
+│   ├── shared/
+│   │   ├── main.tf
+│   │   └── *.tfvars
 │   ├── dev/
 │   │   ├── main.tf
 │   │   └── *.tfvars
@@ -96,12 +99,13 @@ terraform/
 │       └── *.tfvars
 ```
 
-**Option 2: 3-Folder Structure (workload + deployment + modules)**
+**Option 2: Folder Structure (workload + deployment + modules)**
 ```
 terraform/
 ├── workload/            # Terraform source code
 │   └── ...
 ├── deployment/           # Environment-specific configs (.tfvars)
+│   ├── shared/
 │   ├── dev/
 │   ├── uat/
 │   └── prod/
