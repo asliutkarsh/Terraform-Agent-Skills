@@ -11,12 +11,36 @@ These skills turn your AI assistant into a **Senior Platform Engineer** capable 
 ## 🚀 Quick Start
 
 ### Installation
-1. Ensure you have the [Claude CLI](https://github.com/anthropics/claude-code) or a compatible agent environment installed.
-2. Clone this repository.
-3. Copy the contents of the `skills/` directory to your local agent configuration:
+
+#### Option 1: Global Install via `npx skills` (Recommended)
+
+Install all skills globally with a single command:
+
+```bash
+npx skills add asliutkarsh/Terraform-Agent-Skills --skill '*' -g -y
+```
+
+Or pick individual skills:
+
+```bash
+npx skills add asliutkarsh/Terraform-Agent-Skills --skill terraform-azure-standards -g -y
+npx skills add asliutkarsh/Terraform-Agent-Skills --skill terraform-spoke-onboarding -g -y
+```
+
+This installs directly into your agent's global skills directory (`~/.pi/agent/skills/` for Pi, `~/.claude/skills/` for Claude Code, etc.) — no cloning or manual copying needed.
+
+#### Option 2: Manual Install
+
+1. Ensure you have the [Claude CLI](https://github.com/anthropics/claude-code), [Pi](https://github.com/badlogic/pi), or a compatible agent environment installed.
+2. Clone this repository:
    ```bash
-   mkdir -p ~/.claude/skills
-   cp -r skills/* ~/.claude/skills/
+   git clone https://github.com/asliutkarsh/Terraform-Agent-Skills.git
+   ```
+3. Copy the skills to your agent's global skills directory:
+   ```bash
+   # For Pi / Claude Code / compatible agents
+   mkdir -p ~/.agents/skills
+   cp -r Terraform-Agent-Skills/.agent/skills/* ~/.agents/skills/
    ```
 4. Copy the `AGENT.MD` file to the root of your infrastructure repository to activate the context.
 
